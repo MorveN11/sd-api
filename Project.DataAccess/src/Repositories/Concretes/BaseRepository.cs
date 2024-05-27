@@ -1,10 +1,10 @@
 using System.Linq.Expressions;
-using Api.Context;
-using Api.Entities;
-using Api.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Project.DataAccess.Context;
+using Project.DataAccess.Entities.Interfaces;
+using Project.DataAccess.Repositories.Interfaces;
 
-namespace Api.Repositories.Concretes
+namespace Project.DataAccess.Repositories.Concretes
 {
     public abstract class BaseRepository<T> : IBaseRepository<T>
         where T : class, IBaseEntity, new()

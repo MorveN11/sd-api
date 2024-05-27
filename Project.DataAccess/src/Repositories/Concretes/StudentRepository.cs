@@ -1,8 +1,8 @@
-using Api.Context;
-using Api.Entities;
-using Api.Repositories.Interfaces;
+using Project.DataAccess.Context;
+using Project.DataAccess.Entities.Concretes;
+using Project.DataAccess.Repositories.Interfaces;
 
-namespace Api.Repositories.Concretes
+namespace Project.DataAccess.Repositories.Concretes
 {
     public class StudentRepository : BaseRepository<Student>, IStudentRepository
     {

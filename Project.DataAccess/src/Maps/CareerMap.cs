@@ -1,8 +1,8 @@
-using Api.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Project.DataAccess.Entities.Concretes;
 
-namespace Api.Maps
+namespace Project.DataAccess.Maps
 {
     public class CareerMap : IEntityTypeConfiguration<Career>
     {
@@ -11,8 +11,8 @@ namespace Api.Maps
             builder.ToTable("Career");
             builder.HasIndex(p => p.Id);
             builder.Property(p => p.Id).ValueGeneratedOnAdd();
-            builder.Property(p => p.Name);
-            builder.Property(p => p.Code);
+            builder.Property(p => p.Name).IsRequired();
+            builder.Property(p => p.Code).IsRequired();
         }
     }
 }

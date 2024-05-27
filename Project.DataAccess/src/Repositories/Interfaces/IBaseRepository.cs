@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
-using Api.Entities;
+using Project.DataAccess.Entities.Interfaces;
 
-namespace Api.Repositories.Interfaces
+namespace Project.DataAccess.Repositories.Interfaces
 {
     public interface IBaseRepository<T> : IDisposable
         where T : class, IBaseEntity, new()

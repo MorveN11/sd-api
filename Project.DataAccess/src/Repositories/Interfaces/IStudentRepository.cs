@@ -1,6 +1,6 @@
-using Api.Entities;
+using Project.DataAccess.Entities.Concretes;
 
-namespace Api.Repositories.Interfaces
+namespace Project.DataAccess.Repositories.Interfaces
 {
     public interface IStudentRepository : IBaseRepository<Student>
     {

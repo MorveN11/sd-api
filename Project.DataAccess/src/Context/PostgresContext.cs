@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Api.Context
+namespace Project.DataAccess.Context
 {
     public class PostgresContext : DbContext
     {

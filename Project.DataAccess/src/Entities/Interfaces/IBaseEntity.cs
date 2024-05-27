@@ -1,4 +1,4 @@
-namespace Api.Entities
+namespace Project.DataAccess.Entities.Interfaces
 {
     public interface IBaseEntity
     {
