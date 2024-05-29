@@ -4,6 +4,7 @@ using Project.DataAccess.Context;
 using Project.DataAccess.Initializer;
 using Project.DataAccess.Repositories.Concretes;
 using Project.DataAccess.Repositories.Interfaces;
+using Serilog;
 
 namespace Project.Api
 {
@@ -11,6 +12,13 @@ namespace Project.Api
     {
         static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.File(
+                    "log.txt",
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Level:u3}: {Message:lj}{NewLine}{Exception}"
+                )
+                .CreateLogger();
+
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllers(options =>
@@ -25,9 +33,10 @@ namespace Project.Api
                 options.UseNpgsql(builder.Configuration.GetConnectionString("ContextDb"))
             );
 
-            builder.Logging.AddLog4Net("Log4Net.config");
-
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+            builder.Services.AddScoped(typeof(LogHandler));
+
+            builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 
             var app = builder.Build();
 

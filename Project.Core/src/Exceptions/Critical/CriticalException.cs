@@ -4,11 +4,12 @@ namespace Project.Core.Exceptions.Critical
 {
     public class CriticalException : AbstractException
     {
-        public CriticalException(Exception exception)
+        public CriticalException(Exception exception, LogHandler logger)
             : base(
                 exception,
                 "Something wrong happened. Please contact your system administrator",
-                Severity.Error
+                Severity.Error,
+                logger
             ) { }
 
         public override void LogMessage()
@@ -17,8 +18,8 @@ namespace Project.Core.Exceptions.Critical
 
             do
             {
-                LogHandler.Instance.Log(Severity.Error, current?.Message ?? "");
-                LogHandler.Instance.Log(Severity.Error, current?.StackTrace ?? "");
+                Logger.Log(Severity.Error, current?.Message ?? "");
+                Logger.Log(Severity.Error, current?.StackTrace ?? "");
                 current = current?.InnerException;
             } while (current != null);
         }

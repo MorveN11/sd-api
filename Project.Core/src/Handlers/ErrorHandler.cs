@@ -7,6 +7,13 @@ namespace Project.Core.Handlers
 {
     public class ErrorHandler : IActionFilter
     {
+        private readonly LogHandler _logger;
+
+        public ErrorHandler(LogHandler logger)
+        {
+            _logger = logger;
+        }
+
         public void OnActionExecuted(ActionExecutedContext context)
         {
             if (context.Exception == null)
@@ -17,7 +24,7 @@ namespace Project.Core.Handlers
             var exception =
                 (context.Exception is AbstractException)
                     ? context.Exception as AbstractException
-                    : new CriticalException(context.Exception);
+                    : new CriticalException(context.Exception, _logger);
 
             exception?.LogMessage();
 

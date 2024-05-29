@@ -4,12 +4,12 @@ namespace Project.Core.Exceptions.Business
 {
     public class BusinessException : AbstractException
     {
-        public BusinessException(string message)
-            : base(message, Severity.Warning) { }
+        public BusinessException(string message, LogHandler logger)
+            : base(message, Severity.Warning, logger) { }
 
         public override void LogMessage()
         {
-            LogHandler.Instance.Log(Severity, FriendlyMessage);
+            Logger.Log(Severity, FriendlyMessage);
         }
     }
 }

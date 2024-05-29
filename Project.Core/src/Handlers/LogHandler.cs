@@ -1,39 +1,28 @@
-using log4net;
+using Project.Core.Exceptions;
 
 namespace Project.Core.Handlers
 {
     public class LogHandler
     {
-        private readonly ILog _logger;
-        private static LogHandler? instance;
+        private readonly ILogger<AbstractException> _logger;
+        private readonly Dictionary<Severity, Action<string>> _logMethods;
 
-        public static LogHandler Instance => instance ?? (instance = new LogHandler());
-
-        private LogHandler()
+        public LogHandler(ILogger<AbstractException> logger)
         {
-            _logger = LogManager.GetLogger(typeof(LogHandler));
+            _logger = logger;
+            _logMethods = new Dictionary<Severity, Action<string>>
+            {
+                { Severity.Debug, msg => _logger.LogDebug(msg) },
+                { Severity.Info, msg => _logger.LogInformation(msg) },
+                { Severity.Warning, msg => _logger.LogWarning(msg) },
+                { Severity.Error, msg => _logger.LogError(msg) },
+                { Severity.Fatal, msg => _logger.LogCritical(msg) }
+            };
         }
 
         public void Log(Severity severity, string message)
         {
-            switch (severity)
-            {
-                case Severity.Debug:
-                    _logger.Debug(message);
-                    break;
-                case Severity.Info:
-                    _logger.Info(message);
-                    break;
-                case Severity.Warning:
-                    _logger.Warn(message);
-                    break;
-                case Severity.Error:
-                    _logger.Error(message);
-                    break;
-                case Severity.Fatal:
-                    _logger.Fatal(message);
-                    break;
-            }
+            _logMethods[severity](message);
         }
     }
 }

@@ -7,15 +7,22 @@ namespace Project.Core.Exceptions
         public new Exception? InnerException { get; protected set; } = null;
         public string FriendlyMessage { get; protected set; }
         public Severity Severity { get; protected set; }
+        protected LogHandler Logger { get; }
 
-        public AbstractException(string friendlyMessage, Severity severity)
+        public AbstractException(string friendlyMessage, Severity severity, LogHandler logger)
         {
             FriendlyMessage = friendlyMessage;
             Severity = severity;
+            Logger = logger;
         }
 
-        public AbstractException(Exception exception, string friendlyMessage, Severity severity)
-            : this(friendlyMessage, severity)
+        public AbstractException(
+            Exception exception,
+            string friendlyMessage,
+            Severity severity,
+            LogHandler logger
+        )
+            : this(friendlyMessage, severity, logger)
         {
             InnerException = exception;
         }
