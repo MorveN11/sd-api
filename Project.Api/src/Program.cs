@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Project.Api.Initializers;
+using Project.Core.Handlers;
 using Project.DataAccess.Context;
+using Project.DataAccess.Initializer;
 using Project.DataAccess.Repositories.Concretes;
 using Project.DataAccess.Repositories.Interfaces;
 
@@ -12,13 +13,19 @@ namespace Project.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.Add<ErrorHandler>();
+            });
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddDbContext<PostgresContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("ContextDb"))
             );
+
+            builder.Logging.AddLog4Net("Log4Net.config");
 
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 

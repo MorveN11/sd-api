@@ -1,7 +1,7 @@
 using Project.DataAccess.Context;
 using Project.DataAccess.Entities.Concretes;
 
-namespace Project.Api.Initializers
+namespace Project.DataAccess.Initializer
 {
     public static class DbInitializer
     {
