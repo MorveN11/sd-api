@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using Project.Api.Initializers;
 using Project.DataAccess.Context;
+using Project.DataAccess.Repositories.Concretes;
+using Project.DataAccess.Repositories.Interfaces;
 
 namespace Project.Api
 {
@@ -9,14 +12,16 @@ namespace Project.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
             builder.Services.AddDbContext<PostgresContext>(options =>
-                options.UseNpgsql(
-                    builder.Configuration.GetConnectionString("ContextDb"),
-                    builder => builder.MigrationsAssembly("Project.Api")
-                )
+                options.UseNpgsql(builder.Configuration.GetConnectionString("ContextDb"))
             );
+
+            builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
@@ -25,7 +30,9 @@ namespace Project.Api
                 var context = services.GetRequiredService<PostgresContext>();
                 if (app.Environment.IsDevelopment())
                 {
+                    context.Database.EnsureDeleted();
                     context.Database.Migrate();
+                    DbInitializer.Initialize(context);
                 }
             }
 
@@ -35,7 +42,10 @@ namespace Project.Api
                 app.UseSwaggerUI();
             }
 
-            app.MapGet("/", () => "Hello World");
+            app.UseHttpsRedirection();
+            app.UseAuthorization();
+            app.MapControllers();
+
             app.Run();
         }
     }

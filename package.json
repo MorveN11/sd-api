@@ -1,0 +1,9 @@
+{
+  "name": "api",
+  "scripts": {
+    "migrate": "rm -Rf ./Project.DataAccess/Migrations && dotnet ef --project ./Project.DataAccess migrations add InitialMigration -c PostgresContext --startup-project ./Project.Api",
+    "start": "dotnet run --project ./Project.Api",
+    "start:dev": "dotnet watch run --project ./Project.Api",
+    "build": "dotnet build ./Project.Api"
+  }
+}

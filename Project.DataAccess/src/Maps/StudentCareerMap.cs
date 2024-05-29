@@ -8,7 +8,7 @@ namespace Project.DataAccess.Maps
     {
         public void Configure(EntityTypeBuilder<StudentCareer> builder)
         {
-            builder.ToTable("StudentCareer");
+            builder.ToTable("students_careers");
             builder.HasKey(p => new { p.StudentId, p.CareerId });
             builder
                 .HasOne(p => p.Student)

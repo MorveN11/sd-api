@@ -8,7 +8,7 @@ namespace Project.DataAccess.Maps
     {
         public void Configure(EntityTypeBuilder<Student> builder)
         {
-            builder.ToTable("Student");
+            builder.ToTable("student");
             builder.HasIndex(p => p.Id);
             builder.Property(p => p.Id).ValueGeneratedOnAdd();
             builder.Property(p => p.Name).IsRequired();
