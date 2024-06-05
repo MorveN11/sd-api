@@ -4,6 +4,7 @@
         "migrate": "rm -Rf ./Project.DataAccess/Migrations && dotnet ef --project ./Project.DataAccess migrations add InitialMigration -c PostgresContext --startup-project ./Project.Api",
         "start": "dotnet run --project ./Project.Api",
         "start:dev": "dotnet watch run --project ./Project.Api",
+        "start:db": "docker compose up -d",
         "build": "dotnet build ./Project.Api && dotnet build ./Project.Test",
         "test": "dotnet test ./Project.Test"
     }
