@@ -7,6 +7,6 @@ namespace Project.DataAccess.Entities.Concretes
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Code { get; set; } = string.Empty;
-        public List<StudentCareer> StudentCareers { get; set; } = new List<StudentCareer>();
+        public IList<StudentCareer> StudentCareers { get; set; } = new List<StudentCareer>();
     }
 }

@@ -8,6 +8,6 @@ namespace Project.DataAccess.Entities.Concretes
         public string Name { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public DateTime BirthDate { get; set; }
-        public List<StudentCareer> StudentCareers { get; set; } = new List<StudentCareer>();
+        public IList<StudentCareer> StudentCareers { get; set; } = new List<StudentCareer>();
     }
 }

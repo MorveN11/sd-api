@@ -17,14 +17,14 @@ namespace Project.Api
     public class StudentController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly LogHandler _logger;
         private readonly IMapper _mapper;
+        private readonly LogHandler _logger;
 
         public StudentController(IMediator mediator, IMapper mapper, LogHandler logger)
         {
             _mediator = mediator;
-            _logger = logger;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpGet("{studentId}")]
@@ -37,7 +37,7 @@ namespace Project.Api
         }
 
         [HttpGet(), Route("careers/{studentId}")]
-        public async Task<IActionResult> GetStudentCarers([Required] Guid studentId)
+        public async Task<IActionResult> GetStudentCareersById([Required] Guid studentId)
         {
             var contract = new GetStudentCareers(studentId);
 
@@ -48,7 +48,7 @@ namespace Project.Api
         }
 
         [HttpDelete("{studentId}")]
-        public async Task<IActionResult> DeleteStudent([Required] Guid studentId)
+        public async Task<IActionResult> DeleteStudentById([Required] Guid studentId)
         {
             var contract = new DeleteStudentById(studentId);
             var response = await _mediator.Send(contract);
