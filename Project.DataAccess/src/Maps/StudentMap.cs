@@ -12,8 +12,8 @@ namespace Project.DataAccess.Maps
             builder.HasIndex(p => p.Id);
             builder.Property(p => p.Id).ValueGeneratedOnAdd();
             builder.Property(p => p.Name).IsRequired();
-            builder.Property(p => p.Lastname).IsRequired();
-            builder.Property(p => p.Birthday).IsRequired();
+            builder.Property(p => p.LastName).IsRequired();
+            builder.Property(p => p.BirthDate).IsRequired();
         }
     }
 }

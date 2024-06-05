@@ -1,8 +1,14 @@
-using System.Linq.Expressions;
+using System.ComponentModel.DataAnnotations;
+using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Project.Business.DTOs;
+using Project.Business.Students.Delete;
+using Project.Business.Students.Get;
+using Project.Business.Students.Post;
+using Project.Business.Students.Put;
 using Project.Core.Handlers;
 using Project.DataAccess.Entities.Concretes;
-using Project.DataAccess.Repositories.Interfaces;
 
 namespace Project.Api
 {
@@ -10,26 +16,75 @@ namespace Project.Api
     [Route("[controller]")]
     public class StudentController : ControllerBase
     {
-        private readonly IStudentRepository _studentRepository;
+        private readonly IMediator _mediator;
         private readonly LogHandler _logger;
+        private readonly IMapper _mapper;
 
-        public StudentController(IStudentRepository studentRepository, LogHandler logger)
+        public StudentController(IMediator mediator, IMapper mapper, LogHandler logger)
         {
-            _studentRepository = studentRepository;
+            _mediator = mediator;
             _logger = logger;
+            _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetStudents()
+        [HttpGet("{studentId}")]
+        public async Task<IActionResult> GetStudentById([Required] Guid studentId)
         {
-            int x = 0;
-            int y = 0;
-            int z = x / y;
+            var contract = new GetStudentById(studentId);
+            var student = await _mediator.Send(contract);
 
-            Expression<Func<Student, bool>> lambda = student => true;
-            var students = await _studentRepository.Read(lambda);
+            return Ok(student);
+        }
 
-            return Ok(students);
+        [HttpGet(), Route("careers/{studentId}")]
+        public async Task<IActionResult> GetStudentCarers([Required] Guid studentId)
+        {
+            var contract = new GetStudentCareers(studentId);
+
+            var model = await _mediator.Send(contract);
+            var careers = _mapper.Map<IList<CareerDTO>>(model);
+
+            return Ok(careers);
+        }
+
+        [HttpDelete("{studentId}")]
+        public async Task<IActionResult> DeleteStudent([Required] Guid studentId)
+        {
+            var contract = new DeleteStudentById(studentId);
+            var response = await _mediator.Send(contract);
+
+            Console.WriteLine($"Response: {response}");
+            return response switch
+            {
+                > 0 => Ok(),
+                _ => BadRequest()
+            };
+        }
+
+        [HttpPost("{student}")]
+        public async Task<IActionResult> PostStudent([Required] Student student)
+        {
+            var contract = new PostStudent(student);
+            var reponse = await _mediator.Send(contract);
+
+            return reponse switch
+            {
+                > 0 => Ok(),
+                _ => BadRequest()
+            };
+        }
+
+        [HttpPut("{student}")]
+        public async Task<IActionResult> PutStudent([Required] Student student)
+        {
+            var contract = new PutStudent(student);
+            var response = await _mediator.Send(contract);
+
+            return response switch
+            {
+                > 0 => Ok(),
+                _ => BadRequest()
+            };
         }
     }
 }

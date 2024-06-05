@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Project.Business;
 using Project.Core.Handlers;
 using Project.DataAccess.Context;
 using Project.DataAccess.Initializer;
@@ -21,10 +22,17 @@ namespace Project.Api
 
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddControllers(options =>
-            {
-                options.Filters.Add<ErrorHandler>();
-            });
+            builder
+                .Services.AddControllers(options =>
+                {
+                    options.Filters.Add<ErrorHandler>();
+                })
+                .AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft
+                        .Json
+                        .ReferenceLoopHandling
+                        .Ignore
+                );
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -32,6 +40,11 @@ namespace Project.Api
             builder.Services.AddDbContext<PostgresContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("ContextDb"))
             );
+
+            builder.Services.AddMediatR(cfg =>
+                cfg.RegisterServicesFromAssemblies(typeof(ProjectProfile).Assembly)
+            );
+            builder.Services.AddAutoMapper(typeof(ProjectProfile).Assembly);
 
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
             builder.Services.AddScoped(typeof(LogHandler));

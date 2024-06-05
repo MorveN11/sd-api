@@ -12,20 +12,20 @@ namespace Project.DataAccess.Initializer
                 new Student
                 {
                     Name = "John",
-                    Lastname = "Doe",
-                    Birthday = DateTime.Parse("2000-09-01")
+                    LastName = "Doe",
+                    BirthDate = DateTime.Parse("2000-09-01"),
                 },
                 new Student
                 {
                     Name = "Jane",
-                    Lastname = "Doe",
-                    Birthday = DateTime.Parse("2001-10-01")
+                    LastName = "Doe",
+                    BirthDate = DateTime.Parse("2001-10-01")
                 },
             };
 
             foreach (Student s in students)
             {
-                s.Birthday = s.Birthday.ToUniversalTime();
+                s.BirthDate = s.BirthDate.ToUniversalTime();
                 context.Students?.Add(s);
             }
 
