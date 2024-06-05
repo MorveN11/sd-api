@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Project.Business.DTOs;
@@ -20,7 +21,12 @@ namespace Project.Api
         private readonly IMapper _mapper;
         private readonly LogHandler _logger;
 
-        public StudentController(IMediator mediator, IMapper mapper, LogHandler logger)
+        public StudentController(
+            IMediator mediator,
+            IMapper mapper,
+            IValidator<StudentDTO> validtor,
+            LogHandler logger
+        )
         {
             _mediator = mediator;
             _mapper = mapper;
@@ -32,8 +38,9 @@ namespace Project.Api
         {
             var contract = new GetStudentById(studentId);
             var student = await _mediator.Send(contract);
+            var response = _mapper.Map<StudentDTO>(student);
 
-            return Ok(student);
+            return Ok(response);
         }
 
         [HttpGet(), Route("careers/{studentId}")]
@@ -53,7 +60,6 @@ namespace Project.Api
             var contract = new DeleteStudentById(studentId);
             var response = await _mediator.Send(contract);
 
-            Console.WriteLine($"Response: {response}");
             return response switch
             {
                 > 0 => Ok(),
@@ -61,9 +67,16 @@ namespace Project.Api
             };
         }
 
-        [HttpPost("{student}")]
-        public async Task<IActionResult> PostStudent([Required] Student student)
+        [HttpPost()]
+        public async Task<IActionResult> PostStudent([FromBody] StudentDTO studentDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var student = _mapper.Map<Student>(studentDTO);
+
             var contract = new PostStudent(student);
             var reponse = await _mediator.Send(contract);
 
@@ -74,9 +87,16 @@ namespace Project.Api
             };
         }
 
-        [HttpPut("{student}")]
-        public async Task<IActionResult> PutStudent([Required] Student student)
+        [HttpPut()]
+        public async Task<IActionResult> PutStudent([FromBody] StudentDTO studentDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var student = _mapper.Map<Student>(studentDTO);
+
             var contract = new PutStudent(student);
             var response = await _mediator.Send(contract);
 

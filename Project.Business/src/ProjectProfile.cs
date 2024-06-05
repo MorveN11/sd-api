@@ -9,7 +9,9 @@ namespace Project.Business
         public ProjectProfile()
         {
             CreateMap<Student, StudentDTO>();
+            CreateMap<StudentDTO, Student>();
             CreateMap<Career, CareerDTO>();
+            CreateMap<CareerDTO, Career>();
         }
     }
 }

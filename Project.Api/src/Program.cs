@@ -1,6 +1,10 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Project.Business;
+using Project.Business.DTOs;
 using Project.Core.Handlers;
+using Project.Core.Validators;
 using Project.DataAccess.Context;
 using Project.DataAccess.Initializer;
 using Project.DataAccess.Repositories.Concretes;
@@ -48,6 +52,12 @@ namespace Project.Api
 
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
             builder.Services.AddScoped(typeof(LogHandler));
+
+            builder.Services.AddFluentValidationAutoValidation();
+            builder.Services.AddFluentValidationClientsideAdapters();
+
+            builder.Services.AddTransient<IValidator<StudentDTO>, StudentValidator>();
+            builder.Services.AddTransient<IValidator<CareerDTO>, CareerValidator>();
 
             builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 
