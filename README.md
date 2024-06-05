@@ -2,6 +2,10 @@
 
 by Manuel Morales
 
+## UML Diagram
+
+[Diagram](https://drive.google.com/file/d/14tQq3elroA4RGdV0AJ5nt5cww0U59h0R/view?usp=sharing)
+
 ## Requirements
 
 ### For development
