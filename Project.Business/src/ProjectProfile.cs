@@ -1,5 +1,6 @@
 using AutoMapper;
-using Project.Business.DTOs;
+using Project.Business.DTOs.Careers;
+using Project.Business.DTOs.Students;
 using Project.DataAccess.Entities.Concretes;
 
 namespace Project.Business
@@ -8,10 +9,10 @@ namespace Project.Business
     {
         public ProjectProfile()
         {
-            CreateMap<Student, StudentDTO>();
-            CreateMap<StudentDTO, Student>();
-            CreateMap<Career, CareerDTO>();
-            CreateMap<CareerDTO, Career>();
+            CreateMap<Student, StudentResponseDTO>();
+            CreateMap<StudentRequestDTO, Student>();
+            CreateMap<Career, CareerResponseDTO>();
+            CreateMap<CareerRequestDTO, Career>();
         }
     }
 }

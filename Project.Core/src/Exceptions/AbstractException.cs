@@ -9,14 +9,14 @@ namespace Project.Core.Exceptions
         public Severity Severity { get; protected set; }
         protected LogHandler Logger { get; }
 
-        public AbstractException(string friendlyMessage, Severity severity, LogHandler logger)
+        protected AbstractException(string friendlyMessage, Severity severity, LogHandler logger)
         {
             FriendlyMessage = friendlyMessage;
             Severity = severity;
             Logger = logger;
         }
 
-        public AbstractException(
+        protected AbstractException(
             Exception exception,
             string friendlyMessage,
             Severity severity,

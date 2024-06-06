@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Project.DataAccess.Context;
 using Project.DataAccess.Entities.Interfaces;
@@ -9,48 +8,74 @@ namespace Project.DataAccess.Repositories.Concretes
     public abstract class BaseRepository<T> : IBaseRepository<T>
         where T : class, IBaseEntity, new()
     {
-        protected readonly PostgresContext context;
+        protected readonly PostgresContext Context;
 
         protected BaseRepository(PostgresContext context)
         {
-            this.context = context;
+            Context = context;
         }
 
         public void Dispose()
         {
-            if (context != null)
+            if (Context != null)
             {
-                context.Dispose();
+                Context.Dispose();
             }
         }
 
-        public async Task<int> Create(T entity)
+        public async Task<T?> Create(T entity)
         {
-            context.Set<T>().Add(entity);
-            return await context.SaveChangesAsync();
+            var exists = await Exists(entity.Id);
+
+            if (exists)
+            {
+                return null;
+            }
+
+            Context.Set<T>().Add(entity);
+            await Context.SaveChangesAsync();
+
+            return entity;
         }
 
-        public async Task<int> Update(T entity)
+        public async Task<T?> GetById(Guid id)
         {
-            context.Set<T>().Update(entity);
-            return await context.SaveChangesAsync();
+            return await Context.Set<T>().FirstOrDefaultAsync(x => x.Id.Equals(id));
         }
 
-        public async Task<int> Delete(T entity)
+        public async Task<T?> Update(T entity)
         {
-            context.Set<T>().Remove(entity);
-            return await context.SaveChangesAsync();
+            var exists = await Exists(entity.Id);
+
+            if (!exists)
+            {
+                return null;
+            }
+
+            Context.Set<T>().Update(entity);
+            await Context.SaveChangesAsync();
+
+            return entity;
         }
 
-        public async Task<IList<T>> Read(Expression<Func<T, bool>> lambda)
+        public async Task<bool> Delete(T entity)
         {
-            lambda.Compile();
-            return await context.Set<T>().Where(lambda).ToListAsync();
+            var exists = await Exists(entity.Id);
+
+            if (!exists)
+            {
+                return false;
+            }
+
+            Context.Set<T>().Remove(entity);
+            await Context.SaveChangesAsync();
+
+            return true;
         }
 
-        public async Task<T> GetById(Guid id)
+        public async Task<bool> Exists(Guid id)
         {
-            return await context.Set<T>().FirstAsync(x => x.Id.Equals(id));
+            return await Context.Set<T>().AnyAsync(x => x.Id.Equals(id));
         }
     }
 }

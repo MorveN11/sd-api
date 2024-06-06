@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Project.Core.Exceptions;
+using Project.Core.Exceptions.Business;
 using Project.Core.Exceptions.Critical;
+using Project.Core.Responses;
 
 namespace Project.Core.Handlers
 {
@@ -21,14 +23,36 @@ namespace Project.Core.Handlers
                 return;
             }
 
-            var exception =
-                (context.Exception is AbstractException)
-                    ? context.Exception as AbstractException
-                    : new CriticalException(context.Exception, _logger);
+            var exception = context.Exception switch
+            {
+                AbstractException baseException => baseException,
+                _ => new CriticalException(context.Exception, _logger)
+            };
 
-            exception?.LogMessage();
+            var statusCode =
+                exception.GetType().IsGenericType
+                && exception.GetType().GetGenericTypeDefinition() == typeof(NotFoundException<>)
+                    ? StatusCodes.Status404NotFound
+                    : exception switch
+                    {
+                        DuplicateIdException _ => StatusCodes.Status409Conflict,
+                        NotFoundException _ => StatusCodes.Status404NotFound,
+                        CriticalException _ => StatusCodes.Status500InternalServerError,
+                        _ => StatusCodes.Status400BadRequest
+                    };
 
-            context.Result = new ObjectResult(exception) { Value = exception?.FriendlyMessage };
+            exception.LogMessage();
+
+            context.Result = new ObjectResult(
+                new ExceptionResponse()
+                {
+                    errors = new List<string> { exception.FriendlyMessage },
+                    status = statusCode
+                }
+            )
+            {
+                StatusCode = statusCode
+            };
             context.ExceptionHandled = true;
         }
 

@@ -7,7 +7,7 @@ namespace Project.Core.Exceptions.Critical
         public CriticalException(Exception exception, LogHandler logger)
             : base(
                 exception,
-                "Something wrong happened. Please contact your system administrator",
+                "Something wrong happened. Please contact your system administrator.",
                 Severity.Error,
                 logger
             ) { }

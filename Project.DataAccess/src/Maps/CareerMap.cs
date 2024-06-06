@@ -10,9 +10,18 @@ namespace Project.DataAccess.Maps
         {
             builder.ToTable("career");
             builder.HasIndex(p => p.Id);
-            builder.Property(p => p.Id).ValueGeneratedOnAdd();
-            builder.Property(p => p.Name).IsRequired();
-            builder.Property(p => p.Code).IsRequired();
+            builder.Property(p => p.Id).ValueGeneratedOnAdd().HasColumnName("id");
+            builder.Property(p => p.Name).IsRequired().HasColumnName("name");
+            builder.Property(p => p.Code).IsRequired().HasColumnName("code");
+
+            builder
+                .HasMany(p => p.Relations)
+                .WithMany(p => p.Relations)
+                .UsingEntity<Dictionary<string, object>>(
+                    "student_career",
+                    j => j.HasOne<Student>().WithMany().HasForeignKey("student_id"),
+                    j => j.HasOne<Career>().WithMany().HasForeignKey("career_id")
+                );
         }
     }
 }
