@@ -2,11 +2,13 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.OpenApi.Models;
 using Project.Api.Configurations;
 using Project.Business;
 using Project.Business.DTOs.Careers;
 using Project.Business.DTOs.Students;
+using Project.Business.Services;
 using Project.Business.Validators.Careers;
 using Project.Business.Validators.Students;
 using Project.Core.Handlers;
@@ -15,7 +17,10 @@ using Project.DataAccess.Context;
 using Project.DataAccess.Initializer;
 using Project.DataAccess.Repositories.Concretes;
 using Project.DataAccess.Repositories.Interfaces;
+using Project.DataAccess.Services;
 using Serilog;
+using ZiggyCreatures.Caching.Fusion;
+using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
 
 namespace Project.Api
 {
@@ -55,7 +60,7 @@ namespace Project.Api
                                 .SelectMany(e =>
                                     e.Value?.Errors != null
                                         ? e.Value.Errors.Select(error => error.ErrorMessage)
-                                        : new List<string> { }
+                                        : []
                                 )
                                 .ToList(),
                             status = StatusCodes.Status400BadRequest,
@@ -74,11 +79,31 @@ namespace Project.Api
                 options.UseNpgsql(builder.Configuration.GetConnectionString("Database"))
             );
 
+            builder
+                .Services.AddFusionCache()
+                .WithDefaultEntryOptions(options =>
+                    options.Duration = TimeSpan.FromMinutes(
+                        builder.Configuration.GetValue<int>("Cache:DefaultDurationMinutes")
+                    )
+                )
+                .WithSerializer(new FusionCacheSystemTextJsonSerializer())
+                .WithDistributedCache(
+                    new RedisCache(
+                        new RedisCacheOptions
+                        {
+                            Configuration = builder.Configuration.GetConnectionString("Redis"),
+                        }
+                    )
+                )
+                .AsHybridCache();
+
             builder.Services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssemblies(typeof(ProjectProfile).Assembly)
             );
+
             builder.Services.AddAutoMapper(typeof(ProjectProfile).Assembly);
 
+            builder.Services.AddScoped<ICachingService, CachingService>();
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
             builder.Services.AddScoped<ICareerRepository, CareerRepository>();
             builder.Services.AddScoped<IStudentCareerRepository, StudentCareerRepository>();
