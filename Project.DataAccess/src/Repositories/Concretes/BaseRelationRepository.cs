@@ -10,9 +10,9 @@ namespace Project.DataAccess.Repositories.Concretes
         where TFirstEntity : class, IBaseEntityRelation<TSecondEntity>, new()
         where TSecondEntity : class, IBaseEntityRelation<TFirstEntity>, new()
     {
-        protected readonly PostgresContext Context;
+        protected readonly IApplicationDbContext Context;
 
-        protected BaseRelationRepository(PostgresContext context)
+        protected BaseRelationRepository(IApplicationDbContext context)
         {
             Context = context;
         }

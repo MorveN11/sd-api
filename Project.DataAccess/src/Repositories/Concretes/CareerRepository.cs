@@ -7,7 +7,7 @@ namespace Project.DataAccess.Repositories.Concretes
 {
     public class CareerRepository : BaseEntityRelationRepository<Career, Student>, ICareerRepository
     {
-        public CareerRepository(ICachingService cachingService, PostgresContext context)
+        public CareerRepository(ICachingService cachingService, IApplicationDbContext context)
             : base(cachingService, context) { }
     }
 }

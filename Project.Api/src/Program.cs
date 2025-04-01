@@ -79,6 +79,10 @@ namespace Project.Api
                 options.UseNpgsql(builder.Configuration.GetConnectionString("Database"))
             );
 
+            builder.Services.AddScoped<IApplicationDbContext>(sp =>
+                sp.GetRequiredService<PostgresContext>()
+            );
+
             builder
                 .Services.AddFusionCache()
                 .WithDefaultEntryOptions(options =>
@@ -124,8 +128,8 @@ namespace Project.Api
             if (applyMigrations)
             {
                 using var scope = app.Services.CreateScope();
-                var services = scope.ServiceProvider;
-                var context = services.GetRequiredService<PostgresContext>();
+
+                var context = scope.ServiceProvider.GetRequiredService<PostgresContext>();
 
                 if (app.Environment.IsDevelopment())
                 {

@@ -8,7 +8,7 @@ namespace Project.DataAccess.Repositories.Concretes
         : BaseRelationRepository<Student, Career>,
             IStudentCareerRepository
     {
-        public StudentCareerRepository(PostgresContext context)
+        public StudentCareerRepository(IApplicationDbContext context)
             : base(context) { }
     }
 }

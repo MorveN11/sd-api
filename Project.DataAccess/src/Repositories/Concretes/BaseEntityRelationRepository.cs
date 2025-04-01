@@ -14,7 +14,7 @@ namespace Project.DataAccess.Repositories.Concretes
     {
         protected BaseEntityRelationRepository(
             ICachingService cachingService,
-            PostgresContext context
+            IApplicationDbContext context
         )
             : base(cachingService, context) { }
 
@@ -27,6 +27,7 @@ namespace Project.DataAccess.Repositories.Concretes
                     var entity = await Context
                         .Set<TEntity>()
                         .Include(s => s.Relations)
+                        .AsNoTracking()
                         .FirstOrDefaultAsync(s => s.Id.Equals(entityId), token);
 
                     return entity?.Relations;

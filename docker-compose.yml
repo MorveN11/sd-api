@@ -17,21 +17,14 @@ services:
             interval: 5s
             timeout: 5s
             retries: 10
-
-    pgadmin:
-        image: dpage/pgadmin4:latest
-        container_name: pg_admin_api
-        restart: always
-        environment:
-            PGADMIN_DEFAULT_EMAIL: admin@admin.com
-            PGADMIN_DEFAULT_PASSWORD: admin
-            PGADMIN_LISTEN_PORT: 4040
-        ports:
-            - 4040:4040
-        volumes:
-            - pgadmin-data:/var/lib/pgadmin
-        depends_on:
-            - postgres
+        deploy:
+            resources:
+                limits:
+                    cpus: '2'
+                    memory: 2G
+                reservations:
+                    cpus: '1'
+                    memory: 1G
 
     redis:
         image: redislabs/redismod
@@ -40,6 +33,14 @@ services:
             - redis-data:/data
         ports:
             - '6379:6379'
+        deploy:
+            resources:
+                limits:
+                    cpus: '1'
+                    memory: 1G
+                reservations:
+                    cpus: '0.5'
+                    memory: 512M
 
     api1:
         image: ${DOCKER_REGISTRY-}webapi
@@ -55,6 +56,14 @@ services:
         depends_on:
             postgres:
                 condition: service_healthy
+        deploy:
+            resources:
+                limits:
+                    cpus: '2'
+                    memory: 2G
+                reservations:
+                    cpus: '1'
+                    memory: 1G
 
     api2:
         image: ${DOCKER_REGISTRY-}webapi
@@ -71,6 +80,14 @@ services:
         depends_on:
             postgres:
                 condition: service_healthy
+        deploy:
+            resources:
+                limits:
+                    cpus: '2'
+                    memory: 2G
+                reservations:
+                    cpus: '1'
+                    memory: 1G
 
     loadbalancer:
         image: nginx:latest
@@ -81,6 +98,14 @@ services:
         depends_on:
             - api1
             - api2
+        deploy:
+            resources:
+                limits:
+                    cpus: '1'
+                    memory: 1G
+                reservations:
+                    cpus: '0.5'
+                    memory: 512M
 
 volumes:
     pgadmin-data:

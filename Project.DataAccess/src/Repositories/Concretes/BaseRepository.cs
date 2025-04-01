@@ -9,10 +9,10 @@ namespace Project.DataAccess.Repositories.Concretes
     public abstract class BaseRepository<T> : IBaseRepository<T>
         where T : class, IBaseEntity, new()
     {
-        protected readonly PostgresContext Context;
+        protected readonly IApplicationDbContext Context;
         protected readonly ICachingService CachingService;
 
-        protected BaseRepository(ICachingService cachingService, PostgresContext context)
+        protected BaseRepository(ICachingService cachingService, IApplicationDbContext context)
         {
             CachingService = cachingService;
             Context = context;
@@ -52,6 +52,7 @@ namespace Project.DataAccess.Repositories.Concretes
                 {
                     var entity = await Context
                         .Set<T>()
+                        .AsNoTracking()
                         .FirstOrDefaultAsync(x => x.Id.Equals(id), token);
                     return entity;
                 },

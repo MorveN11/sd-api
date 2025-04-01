@@ -5,7 +5,7 @@ namespace Project.DataAccess.Initializer
 {
     public static class DbInitializer
     {
-        public static void Initialize(PostgresContext context)
+        public static void Initialize(IApplicationDbContext context)
         {
             var students = new List<Student>();
             var careers = new List<Career>();
@@ -26,7 +26,7 @@ namespace Project.DataAccess.Initializer
                 "Julia",
                 "Kevin",
                 "Laura",
-                "Michael"
+                "Michael",
             };
             var lastNames = new List<string>
             {
@@ -44,7 +44,7 @@ namespace Project.DataAccess.Initializer
                 "Robinson",
                 "Lewis",
                 "Walker",
-                "Hall"
+                "Hall",
             };
             for (int i = 0; i < 15; i++)
             {
@@ -69,7 +69,7 @@ namespace Project.DataAccess.Initializer
                 "Physics",
                 "Chemistry",
                 "Biology",
-                "Music"
+                "Music",
             };
             for (int i = 0; i < 10; i++)
             {
@@ -77,7 +77,7 @@ namespace Project.DataAccess.Initializer
                     new Career
                     {
                         Name = careerNames[i],
-                        Code = $"CR-{i.ToString().PadLeft(2, '0')}"
+                        Code = $"CR-{i.ToString().PadLeft(2, '0')}",
                     }
                 );
             }
