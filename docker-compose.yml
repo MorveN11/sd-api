@@ -1,18 +1,22 @@
 services:
   postgres:
     image: postgres:latest
-    container_name: postgres_api
+    container_name: postgres
     restart: always
     environment:
-      POSTGRES_DB: api_db
+      POSTGRES_DB: postgres-db
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       TZ: "UTC-4"
     ports:
-      - 3030:3030
-    command: -p 3030
+      - 5432:5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+        test: ['CMD-SHELL', 'pg_isready -U postgres -d postgres-db']
+        interval: 5s
+        timeout: 5s
+        retries: 10
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -29,6 +33,30 @@ services:
     depends_on:
       - postgres
 
+  redis:
+      image: redislabs/redismod
+      container_name: stage.redis
+      volumes:
+          - redis-data:/data
+      ports:
+          - '6379:6379'
+
+  sd-web-api:
+    image: ${DOCKER_REGISTRY-}webapi
+    container_name: sd-web-api
+    build:
+        context: ./
+        dockerfile: ./Project.Api/Dockerfile
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_HTTP_PORTS=8080
+    ports:
+        - '5001:8080'
+    depends_on:
+        postgres:
+            condition: service_healthy
+
 volumes:
   pgadmin-data:
   postgres-data:
+  redis-data:

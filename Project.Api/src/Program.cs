@@ -58,7 +58,7 @@ namespace Project.Api
                                         : new List<string> { }
                                 )
                                 .ToList(),
-                            status = StatusCodes.Status400BadRequest
+                            status = StatusCodes.Status400BadRequest,
                         };
 
                         return new BadRequestObjectResult(result);
@@ -71,7 +71,7 @@ namespace Project.Api
             });
 
             builder.Services.AddDbContext<PostgresContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("ContextDb"))
+                options.UseNpgsql(builder.Configuration.GetConnectionString("Database"))
             );
 
             builder.Services.AddMediatR(cfg =>
