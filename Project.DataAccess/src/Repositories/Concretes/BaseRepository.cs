@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Project.DataAccess.Context;
 using Project.DataAccess.Entities.Interfaces;
 using Project.DataAccess.Repositories.Interfaces;
+using Project.DataAccess.Services;
 
 namespace Project.DataAccess.Repositories.Concretes
 {
@@ -9,9 +10,11 @@ namespace Project.DataAccess.Repositories.Concretes
         where T : class, IBaseEntity, new()
     {
         protected readonly PostgresContext Context;
+        protected readonly ICachingService CachingService;
 
-        protected BaseRepository(PostgresContext context)
+        protected BaseRepository(ICachingService cachingService, PostgresContext context)
         {
+            CachingService = cachingService;
             Context = context;
         }
 
@@ -33,14 +36,27 @@ namespace Project.DataAccess.Repositories.Concretes
             }
 
             Context.Set<T>().Add(entity);
+
             await Context.SaveChangesAsync();
+
+            await CachingService.EvictByTagAsync(typeof(T).Name);
 
             return entity;
         }
 
         public async Task<T?> GetById(Guid id)
         {
-            return await Context.Set<T>().FirstOrDefaultAsync(x => x.Id.Equals(id));
+            return await CachingService.GetOrCreateAsync(
+                $"{typeof(T).Name}_{id}",
+                async token =>
+                {
+                    var entity = await Context
+                        .Set<T>()
+                        .FirstOrDefaultAsync(x => x.Id.Equals(id), token);
+                    return entity;
+                },
+                [typeof(T).Name]
+            );
         }
 
         public async Task<T?> Update(T entity)
@@ -53,7 +69,10 @@ namespace Project.DataAccess.Repositories.Concretes
             }
 
             Context.Set<T>().Update(entity);
+
             await Context.SaveChangesAsync();
+
+            await CachingService.EvictByTagAsync(typeof(T).Name);
 
             return entity;
         }
@@ -68,7 +87,10 @@ namespace Project.DataAccess.Repositories.Concretes
             }
 
             Context.Set<T>().Remove(entity);
+
             await Context.SaveChangesAsync();
+
+            await CachingService.EvictByTagAsync(typeof(T).Name);
 
             return true;
         }

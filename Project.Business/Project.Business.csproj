@@ -12,6 +12,8 @@
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="FluentValidation" Version="11.9.1" />
+      <PackageReference Include="ZiggyCreatures.FusionCache" Version="2.1.0"/>
+      <PackageReference Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson" Version="2.1.0"/>
   </ItemGroup>
 
   <ItemGroup>
