@@ -119,10 +119,14 @@ namespace Project.Api
 
             var app = builder.Build();
 
-            using (var scope = app.Services.CreateScope())
+            var applyMigrations = builder.Configuration.GetValue<bool>("ApplyMigrations");
+
+            if (applyMigrations)
             {
+                using var scope = app.Services.CreateScope();
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<PostgresContext>();
+
                 if (app.Environment.IsDevelopment())
                 {
                     context.Database.EnsureDeleted();
