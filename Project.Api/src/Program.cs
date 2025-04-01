@@ -76,7 +76,7 @@ namespace Project.Api
             });
 
             builder.Services.AddDbContext<PostgresContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("ContextDb"))
+                options.UseNpgsql(builder.Configuration.GetConnectionString("Database"))
             );
 
             builder
