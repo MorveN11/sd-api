@@ -19,6 +19,7 @@ using Project.DataAccess.Repositories.Concretes;
 using Project.DataAccess.Repositories.Interfaces;
 using Project.DataAccess.Services;
 using Serilog;
+using Prometheus;
 using ZiggyCreatures.Caching.Fusion;
 using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
 
@@ -149,8 +150,11 @@ namespace Project.Api
                 });
             }
 
+            app.UseHttpMetrics();
+            app.MapMetrics();
             app.UseHttpsRedirection();
             app.UseAuthorization();
+            app.MapGet("/", () => "Welcome to the API!");
             app.MapControllers();
 
             app.Run();
