@@ -1,6 +1,7 @@
 using Project.DataAccess.Context;
 using Project.DataAccess.Entities.Concretes;
 using Project.DataAccess.Repositories.Interfaces;
+using Project.DataAccess.Services;
 
 namespace Project.DataAccess.Repositories.Concretes
 {
@@ -8,7 +9,7 @@ namespace Project.DataAccess.Repositories.Concretes
         : BaseEntityRelationRepository<Student, Career>,
             IStudentRepository
     {
-        public StudentRepository(PostgresContext context)
-            : base(context) { }
+        public StudentRepository(ICachingService cachingService, IApplicationDbContext context)
+            : base(cachingService, context) { }
     }
 }
