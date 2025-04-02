@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sd-web-api
+  labels:
+    app: sd-web-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sd-web-api
+  template:
+    metadata:
+      labels:
+        app: sd-web-api
+    spec:
+      containers:
+      - name: sd-web-api
+        image: sd-web-api:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "500m"
+            memory: "1Gi"

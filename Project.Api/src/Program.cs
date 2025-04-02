@@ -16,6 +16,7 @@ using Project.DataAccess.Initializer;
 using Project.DataAccess.Repositories.Concretes;
 using Project.DataAccess.Repositories.Interfaces;
 using Serilog;
+using Prometheus;
 
 namespace Project.Api
 {
@@ -116,8 +117,11 @@ namespace Project.Api
                 });
             }
 
+            app.UseHttpMetrics();
+            app.MapMetrics();
             app.UseHttpsRedirection();
             app.UseAuthorization();
+            app.MapGet("/", () => "Welcome to the API!");
             app.MapControllers();
 
             app.Run();
